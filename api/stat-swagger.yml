@@ -1,0 +1,135 @@
+swagger: '2.0'
+info:
+  version: 0.1.0
+  title: Stats operator API
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - https
+paths:
+  /_livenessProbe:
+    get:
+      tags:
+        - health
+      summary: Liveness Probe
+      description: Liveness Probe
+      operationId: getLivenessProbe
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/LivenessProbe"
+        500:
+          description: Internal Server Error
+  /_readinessProbe:
+    get:
+      tags:
+        - health
+      summary: Readiness Probe
+      description: Readiness Probe
+      operationId: getReadinessProbe
+      responses:
+        200:
+          description: Successful Response
+        500:
+          description: Internal Server Error
+  /app-codes:
+    get:
+      tags:
+        - general
+      summary: Get List of Application Codes
+      description: Get list of application codes
+      operationId: getAppCodes
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: "#/definitions/GetAppMessagesResponse"
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+
+definitions:
+  AppMessage:
+    title: AppMessage
+    type: object
+    required:
+      - message
+      - code
+      - attributes
+    properties:
+      code:
+        title: Code
+        type: string
+        x-nullable: false
+      message:
+        title: Message
+        type: string
+        x-nullable: false
+      attributes:
+        description: attributes
+        type: array
+        items:
+          type: string
+        x-nullable: false
+  GetAppMessagesResponse:
+    title: GetAppCodesResponse
+    type: array
+    items:
+      $ref: "#/definitions/AppMessage"
+  ErrorMessage:
+    title: ErrorMessage
+    required:
+      - message
+    type: object
+    properties:
+      code:
+        title: Code
+        type: string
+        x-nullable: false
+      message:
+        title: Message
+        type: string
+        x-nullable: false
+      attributes:
+        description: attributes
+        type: object
+        additionalProperties:
+          type: string
+        x-nullable: false
+  LivenessProbe:
+    title: LivenessProbe
+    required:
+      - tag
+    type: object
+    properties:
+      tag:
+        title: Tag
+        type: string
+        x-nullable: false
+      components:
+        title: LivenessProbeComponents
+        type: array
+        items:
+          $ref: "#/definitions/LivenessProbeComponent"
+  LivenessProbeComponent:
+    title: LivenessProbeComponent
+    required:
+      - name
+      - status
+    type: object
+    properties:
+      name:
+        title: Name
+        type: string
+        x-nullable: false
+      status:
+        title: Status
+        type: boolean
+        x-nullable: false
+
+

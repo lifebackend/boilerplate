@@ -1,0 +1,9 @@
+/vendor/
+/.idea/
+/.data/
+/bin
+/.bin/golangci-lint
+
+# vsCode
+.history
+.vscode

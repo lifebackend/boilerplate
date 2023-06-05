@@ -1,0 +1,7 @@
+FROM golang:1.19-alpine
+
+RUN set -x \
+	&& go install golang.org/x/tools/cmd/goimports@latest
+
+ENTRYPOINT ["goimports"]
+CMD ["--help"] 

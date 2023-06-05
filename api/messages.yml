@@ -1,0 +1,14 @@
+types:
+  err: error
+  id: int64
+  walletID: int64
+defaultType: string
+messages:
+  InternalAuthError:
+    text: "internal auth error: {{err}}"
+  InternalServiceError:
+    text: "internal service error: {{err}}"
+  UnableParseAmount:
+    text: "unable to parse the field {{field}} with value {{value}} as amount"
+  UnexpectedForeignType:
+    text: "Unexpected foreign type {{foreignType}}"

@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  ### services (sorted by port)
+  wallet:
+    build:
+      context: build/service
+#    profiles: ["wallet"]
+    depends_on:
+      - backend-db
+    volumes:
+      - .:$PWD
+    working_dir: $PWD
+    command: /bin/bash -c "go mod download && ls -la cmd/core && cd cmd/core && pwd && realize start"
+    env_file:
+      - .env
+#    environment:
+#      - DEBUG=1
+    healthcheck:
+      test:
+        [
+            "CMD",
+            "curl",
+            "-f",
+            "http://localhost:$WALLET_SERVICE_PORT/_livenessProbe",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    ports:
+      - $WALLET_SERVICE_PORT:$WALLET_SERVICE_PORT
+
+  ### kafka configuration
+  zookeeper:
+    image: bitnami/zookeeper:3.5.9
+    ports:
+      - $ZOOKEEPER_PORT:$ZOOKEEPER_PORT
+    expose:
+      - $ZOOKEEPER_PORT
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: bitnami/kafka:3.1.0
+    ports:
+      - $KAFKA_PORT:$KAFKA_PORT
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=$ZOOKEEPER_URL
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://:$KAFKA_PORT,PLAINTEXT_HOST://:29092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:$KAFKA_PORT,PLAINTEXT_HOST://localhost:29092
+      - ALLOW_ANONYMOUS_LOGIN=yes
+volumes:
+  esdata:
+    driver: local

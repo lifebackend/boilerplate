@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  test:
+    image: golang:1.19-alpine-alpine
+    container_name: test
+    env_file:
+      - .env
+    environment:
+      CGO_ENABLED: 0
+      CI: $CI
+    volumes:
+      - .:$PWD
+    working_dir: $PWD
+    command: [ "tail", "-f", "/dev/null" ]
